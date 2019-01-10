@@ -3,7 +3,7 @@ import requests
 import argparse
 from bs4 import BeautifulSoup
 
-def main(limit,query,title,vonly):
+def main(limit,query,title,all):
     #   Query
     baseurl = 'https://duckduckgo.com/lite/'
     prefix = 'site:youtube.com '
@@ -26,7 +26,7 @@ def main(limit,query,title,vonly):
         #   Data Getter
         text = link.get_text()
         href = link.get('href')
-        if (vonly and 'watch' in href) or not vonly:
+        if ('watch' in href) or all:
             #   Print
             if(title):
                 print(text)
@@ -37,7 +37,7 @@ def main(limit,query,title,vonly):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Youtube CLI searcher')
     parser.add_argument('--notitle',help='print only urls',action='store_false')
-    parser.add_argument('--vonly',help='remove channels, playlists, etc.',action='store_true')
+    parser.add_argument('--all',help='include channels, playlists, etc.',action='store_true')
     parser.add_argument('-l',dest='limit',help='limits the number of results',action='store')
     parser.add_argument('query',help='search query',nargs='+')
     args = parser.parse_args()
@@ -52,4 +52,4 @@ if __name__ == "__main__":
     for keyword in args.query:
         querystring = querystring + keyword + ' '
 
-    main(limit,querystring,args.notitle,args.vonly)
+    main(limit,querystring,args.notitle,args.all)
