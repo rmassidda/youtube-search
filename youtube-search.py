@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import requests
+import urllib
 import argparse
 from bs4 import BeautifulSoup
 
@@ -7,12 +7,19 @@ def main(limit,query,title,all):
     #   Query
     baseurl = 'https://duckduckgo.com/lite/'
     prefix = 'site:youtube.com '
-    #   Post request to DDG <3
-    r = requests.post(baseurl, data = {
-        'q' : prefix+query
-    })
+
+    # User agent
+    user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+    headers={'User-Agent':user_agent,}
+
+    # Prepare for POST request
+    data = urllib.parse.urlencode({'q': prefix+query})
+    data = data.encode('ascii')
+    request=urllib.request.Request(baseurl,data,headers)
+    f = urllib.request.urlopen(request)
+
     #   Parsing
-    soup = BeautifulSoup(r.text,'html.parser')
+    soup = BeautifulSoup(f.read(),'html.parser')
     results = soup.find_all('a')
     #   Check if there are results
     if not results:
